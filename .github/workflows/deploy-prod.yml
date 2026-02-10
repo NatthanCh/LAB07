@@ -1,0 +1,25 @@
+name: deploy on push production branch
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Copy files to EC2 server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ubuntu
+          port: 22
+          key: ${{ secrets.SSH_KEY }}
+          source: "html/*"
+          target: "/home/ubuntu/html"
+          timeout: 120s
